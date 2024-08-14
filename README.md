@@ -1066,3 +1066,722 @@ VALUES
     (350, 45, 90, 'lent' ,1)
     ;
 ```
+
+## Querying Data and Viewing Results
+
+**1. Query Example:** To query data from the clients table, you can use the following command:
+
+```sh
+mysql> SELECT * FROM clients WHERE client_id = 6;
++-----------+-------------+-------------------------+---------------------+--------+--------+---------------------+---------------------+
+| client_id | name        | email                   | birthdate           | gender | active | created_at          | updated_at          |
++-----------+-------------+-------------------------+---------------------+--------+--------+---------------------+---------------------+
+|         6 | Emma Watson | emma.watson@example.com | 1990-04-15 00:00:00 | F      |      1 | 2024-08-09 11:41:25 | 2024-08-09 11:41:25 |
++-----------+-------------+-------------------------+---------------------+--------+--------+---------------------+---------------------+
+1 row in set (0.00 sec)
+```
+**2. More Readable Output:** For a more readable format, use the `\G` option at the end of your query. This will format the output vertically:
+
+```sh
+mysql> SELECT * FROM clients WHERE client_id = 6\G
+*************************** 1. row ***************************
+ client_id: 6
+      name: Emma Watson
+     email: emma.watson@example.com
+ birthdate: 1990-04-15 00:00:00
+    gender: F
+    active: 1
+created_at: 2024-08-09 11:41:25
+updated_at: 2024-08-09 11:41:25
+1 row in set (0.00 sec)
+```
+
+
+## Querying Data with SELECT
+
+The `SELECT` statement is used to query data from a database. Below are several examples demonstrating how to use SELECT to retrieve and format data.
+
+**1. Basic Query:** Retrieve the `name`, `email`, and `gender` columns from the `clients` table with a limit of 10 rows:
+
+```sh
+mysql> SELECT name, email, gender FROM clients
+    -> LIMIT 10;
++--------------------+--------------------------------+--------+
+| name               | email                          | gender |
++--------------------+--------------------------------+--------+
+| Tom Hanks          | tom.hanks@example.com          | M      |
+| Scarlett Johansson | scarlett.johansson@example.com | F      |
+| Robert Downey Jr.  | robert.downey.jr@example.com   | M      |
+| Jennifer Lawrence  | jennifer.lawrence@example.com  | F      |
+| Morgan Freeman     | morgan.freeman@example.com     | M      |
+| Emma Watson        | emma.watson@example.com        | F      |
+| Ryan Reynolds      | ryan.reynolds@example.com      | M      |
+| Natalie Portman    | natalie.portman@example.com    | F      |
+| Leonardo DiCaprio  | leonardo.dicaprio@example.com  | M      |
+| Marge Simpson      | marge.simpson@example.com      | F      |
++--------------------+--------------------------------+--------+
+10 rows in set (0.00 sec)
+```
+**2. Filtering Data:** Retrieve `name`, `email`, and `gender` for female clients only, with a limit of 10 rows:
+
+```sh
+mysql> SELECT name, email, gender FROM clients WHERE gender = 'F' LIMIT 10;
++--------------------+--------------------------------+--------+
+| name               | email                          | gender |
++--------------------+--------------------------------+--------+
+| Scarlett Johansson | scarlett.johansson@example.com | F      |
+| Jennifer Lawrence  | jennifer.lawrence@example.com  | F      |
+| Emma Watson        | emma.watson@example.com        | F      |
+| Natalie Portman    | natalie.portman@example.com    | F      |
+| Marge Simpson      | marge.simpson@example.com      | F      |
+| Jennifer Garner    | jennifer.garner@example.com    | F      |
+| Meryl Streep       | meryl.streep@example.com       | F      |
+| Angelina Jolie     | angelina.jolie@example.com     | F      |
+| Julia Roberts      | julia.roberts@example.com      | F      |
+| Charlize Theron    | charlize.theron@example.com    | F      |
++--------------------+--------------------------------+--------+
+10 rows in set (0.00 sec)
+```
+**3. Extracting Parts of Data:** Retrieve the `name` and the birth year of clients, limiting to 10 rows:
+```sh
+mysql> SELECT name, YEAR(birthdate) FROM clients LIMIT 10;
++--------------------+-----------------+
+| name               | year(birthdate) |
++--------------------+-----------------+
+| Tom Hanks          |            1956 |
+| Scarlett Johansson |            1984 |
+| Robert Downey Jr.  |            1965 |
+| Jennifer Lawrence  |            1990 |
+| Morgan Freeman     |            1937 |
+| Emma Watson        |            1990 |
+| Ryan Reynolds      |            1976 |
+| Natalie Portman    |            1981 |
+| Leonardo DiCaprio  |            1974 |
+| Marge Simpson      |            1956 |
++--------------------+-----------------+
+10 rows in set (0.00 sec)
+```
+
+**4. Using Date Functions:** Retrieve the current date and time:
+
+```sh
+mysql> SELECT NOW();
++---------------------+
+| now()               |
++---------------------+
+| 2024-08-13 13:14:56 |
++---------------------+
+1 row in set (0.00 sec)
+```
+**5. Calculating Values:** Calculate the age of female clients:
+
+```sh
+mysql> SELECT name, YEAR(NOW()) - YEAR(birthdate) FROM clients WHERE gender = 'F' LIMIT 10;
++--------------------+-------------------------------+
+| name               | year(now()) - year(birthdate) |
++--------------------+-------------------------------+
+| Scarlett Johansson |                            40 |
+| Jennifer Lawrence  |                            34 |
+| Emma Watson        |                            34 |
+| Natalie Portman    |                            43 |
+| Marge Simpson      |                            68 |
+| Jennifer Garner    |                            52 |
+| Meryl Streep       |                            75 |
+| Angelina Jolie     |                            49 |
+| Julia Roberts      |                            57 |
+| Charlize Theron    |                            49 |
++--------------------+-------------------------------+
+10 rows in set (0.01 sec)
+```
+**6. Using Patterns for Search:** Search for clients whose name contains "worth":
+
+```sh
+mysql> SELECT * FROM clients WHERE name LIKE '%worth'\G
+*************************** 1. row ***************************
+ client_id: 29
+      name: Chris Hemsworth
+     email: chris.hemsworth@example.com
+ birthdate: 1983-08-11 00:00:00
+    gender: M
+    active: 1
+created_at: 2024-08-13 11:43:55
+updated_at: 2024-08-13 11:43:55
+1 row in set (0.00 sec)
+```
+**7. Combining Conditions:** Retrieve names and ages of female clients whose names include "nifer":
+
+```sh
+mysql> SELECT name, YEAR(NOW()) - YEAR(birthdate) AS age
+    -> FROM clients
+    -> WHERE gender = 'F'
+    -> AND name LIKE '%nifer%';
++-------------------+------+
+| name              | age  |
++-------------------+------+
+| Jennifer Lawrence |   34 |
+| Jennifer Garner   |   52 |
++-------------------+------+
+2 rows in set (0.00 sec)
+```
+## Combining Data with JOIN
+
+The JOIN (or INNER JOIN) clause is used to combine rows from two or more tables based on a related column between them. Here are some examples demonstrating different types of joins in MySQL.
+
+**1. Counting Rows in Tables:** First, let’s count the number of rows in the `books` and `authors` tables:
+
+    - `books`:
+```sh
+mysql> SELECT COUNT(*) FROM books;
++----------+
+| count(*) |
++----------+
+|      176 |
++----------+
+1 row in set (0.01 sec)
+```
+    - `authors`:
+```sh
+mysql> SELECT COUNT(*) FROM authors;
++----------+
+| count(*) |
++----------+
+|       99 |
++----------+
+1 row in set (0.00 sec)
+```
+
+**2. Retrieving Data from Multiple Tables:**
+
+    2.1. Retrieve Authors: 
+    
+    Get details of authors with IDs between 1 and 5:
+
+```sh
+mysql> SELECT * FROM authors WHERE author_id > 0 AND author_id <= 5;
++-----------+------------------------+-------------+
+| author_id | name                   | nationality |
++-----------+------------------------+-------------+
+|         1 | Dave Grohl             | USA         |
+|         2 | Aldous Huxley          | GBR         |
+|         3 | Eric Ries              | USA         |
+|         4 | Gabriel Garcia Marquez | COL         |
+|         5 | J.K. Rowling           | GBR         |
++-----------+------------------------+-------------+
+5 rows in set (0.01 sec)
+```
+    2.2. Retrieve Books: 
+    
+    Get books with author IDs between 1 and 5:
+
+```sh
+mysql> SELECT book_id, author_id, title FROM books WHERE author_id BETWEEN 1 AND 5;
++---------+-----------+------------------------------------------+
+| book_id | author_id | title                                    |
++---------+-----------+------------------------------------------+
+|       1 |         1 | The Storyteller: Tales of Life and Music |
+|       2 |         2 | Brave New World                          |
+|       3 |         3 | The Lean Startup                         |
+|       4 |         4 | One Hundred Years of Solitude            |
+|       5 |         5 | Harry Potter and the Sorcerer's Stone    |
++---------+-----------+------------------------------------------+
+5 rows in set (0.00 sec)
+```
+**3. Using INNER JOIN:**
+    
+    3.1. Combine Books and Authors: 
+    
+    Join `books` with `authors` to get book titles along with author names for authors with IDs between 1 and 5:
+
+```sh
+SELECT b.book_id, a.name, b.title
+FROM books AS b
+INNER JOIN authors AS a
+    ON a.author_id = b.author_id
+WHERE a.author_id BETWEEN 1 AND 5;
+
++---------+------------------------+------------------------------------------+
+| book_id | name                   | title                                    |
++---------+------------------------+------------------------------------------+
+|       1 | Dave Grohl             | The Storyteller: Tales of Life and Music |
+|       2 | Aldous Huxley          | Brave New World                          |
+|       3 | Eric Ries              | The Lean Startup                         |
+|       4 | Gabriel Garcia Marquez | One Hundred Years of Solitude            |
+|       5 | J.K. Rowling           | Harry Potter and the Sorcerer's Stone    |
++---------+------------------------+------------------------------------------+
+5 rows in set (0.00 sec)
+```
+    3.2 Combine Operations, Books, Clients, and Author: 
+    
+    Retrieve names of female clients, book titles, author names, and operation types for operations where books were sold:
+
+```sh
+SELECT c.name, b.title, a.name, o.type
+FROM operations AS o
+INNER JOIN books AS b
+    ON o.book_id = b.book_id
+INNER JOIN clients AS c
+    ON o.client_id = c.client_id
+INNER JOIN authors AS a
+    ON b.author_id = a.author_id
+WHERE c.gender = 'F'
+    AND o.type = 'sold';
+
++--------------------+------------------------------------------+------------------------+------+
+| name               | title                                    | name                   | type |
++--------------------+------------------------------------------+------------------------+------+
+| Scarlett Johansson | Brave New World                          | Aldous Huxley          | sold |
+| Jennifer Lawrence  | The Lean Startup                         | Eric Ries              | sold |
+| Emma Watson        | One Hundred Years of Solitude            | Gabriel Garcia Marquez | sold |
+| Natalie Portman    | Harry Potter and the Sorcerer's Stone    | J.K. Rowling           | sold |
++--------------------+------------------------------------------+------------------------+------+
+4 rows in set (0.01 sec)
+```
+    3.3 Filter Results Based on Conditions: 
+    
+    Retrieve names, book titles, authors, and operation types for male clients where books were either sold or lent:
+
+```sh
+SELECT c.name, b.title, a.name, o.type
+FROM operations AS o
+INNER JOIN books AS b
+    ON o.book_id = b.book_id
+INNER JOIN clients AS c
+    ON o.client_id = c.client_id
+INNER JOIN authors AS a
+    ON b.author_id = a.author_id
+WHERE c.gender = 'M'
+    AND o.type IN ('sold', 'lent');
+
++------------------+------------------------------------------+------------------------+------+
+| name             | title                                    | name                   | type |
++------------------+------------------------------------------+------------------------+------+
+| Tom Hanks        | The Storyteller: Tales of Life and Music | Dave Grohl             | sold |
+| Robert Downey Jr.| Brave New World                          | Aldous Huxley          | lent |
++------------------+------------------------------------------+------------------------+------+
+2 rows in set (0.00 sec)
+```
+
+## Using LEFT JOIN and Other JOIN Types
+
+In SQL, `JOIN` operations are crucial for combining data from multiple tables. Below, we explore different types of joins, including `LEFT JOIN`, and how to use them effectively.
+
+**1. Implicit JOIN vs. Explicit JOIN:**
+
+    1.1. Implicit JOIN: 
+    
+    Uses a comma to separate table names and combines tables based on the `WHERE` clause:
+
+
+```sh
+SELECT b.title, a.name
+FROM authors AS a, books AS b
+WHERE a.author_id = b.author_id
+LIMIT 10;
+
++------------------------------------------+------------------------+
+| title                                    | name                   |
++------------------------------------------+------------------------+
+| The Storyteller: Tales of Life and Music | Dave Grohl             |
+| Brave New World                          | Aldous Huxley          |
+| The Lean Startup                         | Eric Ries              |
+| One Hundred Years of Solitude            | Gabriel Garcia Marquez |
+| Harry Potter and the Sorcerer's Stone    | J.K. Rowling           |
+| War and Peace                            | Leo Tolstoy            |
+| Crime and Punishment                     | Fyodor Dostoevsky      |
+| Moby-Dick                                | Herman Melville        |
+| Great Expectations                       | Charles Dickens        |
+| Murder on the Orient Express             | Agatha Christie        |
++------------------------------------------+------------------------+
+10 rows in set (0.00 sec)
+```
+    1.2 Explicit JOIN: 
+    
+    Uses the `JOIN` keyword for better readability and understanding. The example below uses `INNER JOIN`, which is the same as `JOIN`:
+
+```sh
+SELECT b.title, a.name
+FROM books AS b
+INNER JOIN authors AS a
+  ON a.author_id = b.author_id
+LIMIT 10;
+
++------------------------------------------+------------------------+
+| title                                    | name                   |
++------------------------------------------+------------------------+
+| The Storyteller: Tales of Life and Music | Dave Grohl             |
+| Brave New World                          | Aldous Huxley          |
+| The Lean Startup                         | Eric Ries              |
+| One Hundred Years of Solitude            | Gabriel Garcia Marquez |
+| Harry Potter and the Sorcerer's Stone    | J.K. Rowling           |
+| War and Peace                            | Leo Tolstoy            |
+| Crime and Punishment                     | Fyodor Dostoevsky      |
+| Moby-Dick                                | Herman Melville        |
+| Great Expectations                       | Charles Dickens        |
+| Murder on the Orient Express             | Agatha Christie        |
++------------------------------------------+------------------------+
+10 rows in set (0.00 sec)
+```
+**2. INNER JOIN with ORDER BY:** When sorting results, you can use the `ORDER BY` clause. By default, the sorting is in ascending order (`ASC`), but you can specify descending order (`DESC`):
+
+```sh
+SELECT a.author_id, a.name, a.nationality, b.title
+FROM authors AS a
+INNER JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 1 AND 5
+ORDER BY a.name DESC;
+
++-----------+------------------------+-------------+------------------------------------------+
+| author_id | name                   | nationality | title                                    |
++-----------+------------------------+-------------+------------------------------------------+
+|         5 | J.K. Rowling           | GBR         | Harry Potter and the Sorcerer's Stone    |
+|         4 | Gabriel Garcia Marquez | COL         | One Hundred Years of Solitude            |
+|         3 | Eric Ries              | USA         | The Lean Startup                         |
+|         1 | Dave Grohl             | USA         | The Storyteller: Tales of Life and Music |
+|         2 | Aldous Huxley          | GBR         | Brave New World                          |
++-----------+------------------------+-------------+------------------------------------------+
+5 rows in set (0.00 sec)
+```
+**3. LEFT JOIN:** The `LEFT JOIN` (or `LEFT OUTER JOIN`) returns all rows from the left table and the matched rows from the right table. If no match is found, NULL values are returned for columns from the right table.
+
+    3.1 Example with LEFT JOIN:
+    
+    Retrieve authors and their books. If an author does not have any books, their details will still be included:
+
+```sh
+SELECT a.author_id, a.name, a.nationality, b.title
+FROM authors AS a
+LEFT JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 10 AND 15
+ORDER BY a.author_id;
+
++-----------+-------------------+-------------+------------------------------+
+| author_id | name              | nationality | title                        |
++-----------+-------------------+-------------+------------------------------+
+|        10 | Fyodor Dostoevsky | RUS         | Crime and Punishment         |
+|        11 | Herman Melville   | USA         | Moby-Dick                    |
+|        12 | J.R.R. Tolkien    | GBR         | The Silmarillion             |
+|        13 | Charles Dickens   | GBR         | Great Expectations           |
+|        14 | Agatha Christie   | GBR         | Murder on the Orient Express |
+|        15 | Isaac Asimov      | USA         | I, Robot                     |
++-----------+-------------------+-------------+------------------------------+
+6 rows in set (0.00 sec)
+```
+In this example, if an author in the specified range does not have any books, the title field will be NULL.
+
+**4. Counting Books per Author:** To count the number of books each author has, use `COUNT` along with `GROUP BY`. This counts the number of books and groups the results by author:
+
+```sh
+SELECT a.author_id, a.name, a.nationality, COUNT(b.book_id)
+FROM authors AS a
+LEFT JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 20 AND 25
+GROUP BY a.author_id
+ORDER BY a.author_id;
+
++-----------+-------------------+-------------+------------------+
+| author_id | name              | nationality | COUNT(b.book_id) |
++-----------+-------------------+-------------+------------------+
+|        20 | Ursula K. Le Guin | USA         |                1 |
+|        21 | Margaret Atwood   | CAN         |                1 |
+|        22 | Neil Gaiman       | GBR         |                1 |
+|        23 | Douglas Adams     | GBR         |                1 |
+|        24 | Michael Moorcock  | GBR         |                2 |
+|        25 | Anne Rice         | USA         |                2 |
++-----------+-------------------+-------------+------------------+
+6 rows in set (0.04 sec)
+```
+In this query, `COUNT(b.book_id)` counts the number of books for each author, including those with no books.
+
+## Business Cases and Queries
+
+Here are some common business queries you can run on your database to extract meaningful insights.
+
+**1. What Nationalities Are There?** To list all distinct nationalities from the authors and order them alphabetically:
+
+```sh
+SELECT DISTINCT nationality 
+FROM authors 
+ORDER BY nationality;
+
++-------------+
+| nationality |
++-------------+
+| ARG         |
+| AUS         |
+| CAN         |
+| CHI         |
+| CHN         |
+| COL         |
+| DEU         |
+| ESP         |
+| FRA         |
+| GBR         |
+| IND         |
+| IRL         |
+| ISR         |
+| MEX         |
+| PER         |
+| RUS         |
+| USA         |
++-------------+
+17 rows in set (0.00 sec)
+```
+
+**2. How Many Authors Are There from Each Nationality?** To count the number of authors from each nationality, excluding `NULL` values:
+
+```sh
+SELECT nationality, COUNT(author_id) AS authors_count
+FROM authors
+WHERE nationality IS NOT NULL
+GROUP BY nationality
+ORDER BY authors_count DESC, nationality ASC;
+
++-------------+---------------+
+| nationality | authors_count |
++-------------+---------------+
+| USA         |            46 |
+| GBR         |            21 |
+| CAN         |             5 |
+| FRA         |             5 |
+| CHI         |             4 |
+| MEX         |             3 |
+| ARG         |             2 |
+| DEU         |             2 |
+| ISR         |             2 |
+| RUS         |             2 |
+| AUS         |             1 |
+| CHN         |             1 |
+| COL         |             1 |
+| ESP         |             1 |
+| IND         |             1 |
+| IRL         |             1 |
+| PER         |             1 |
++-------------+---------------+
+17 rows in set (0.00 sec)
+```
+
+**3. How Many Books Are There from Each Nationality?** To count the number of books written by authors from each nationality:
+
+```sh
+SELECT a.nationality, COUNT(b.book_id) AS books_count
+FROM authors AS a
+INNER JOIN books AS b
+    ON b.author_id = a.author_id
+WHERE nationality IS NOT NULL
+GROUP BY nationality
+ORDER BY books_count DESC, nationality ASC;
+
++-------------+-------------+
+| nationality | books_count |
++-------------+-------------+
+| USA         |          83 |
+| GBR         |          33 |
+| FRA         |          10 |
+| CAN         |           9 |
+| CHI         |           8 |
+| MEX         |           6 |
+| ARG         |           4 |
+| DEU         |           4 |
+| ISR         |           4 |
+| AUS         |           2 |
+| CHN         |           2 |
+| ESP         |           2 |
+| IND         |           2 |
+| IRL         |           2 |
+| PER         |           2 |
+| RUS         |           2 |
+| COL         |           1 |
++-------------+-------------+
+17 rows in set (0.00 sec)
+```
+**4. What Is the Average and Standard Deviation of Book Prices by Nationality?** To get the average price and standard deviation of book prices for each nationality:
+
+```sh
+SELECT nationality,
+    COUNT(book_id) AS books_count,
+    AVG(price) AS mean, 
+    STDDEV(price) AS std
+FROM books AS b
+JOIN authors AS a
+    ON a.author_id = b.author_id
+GROUP BY nationality
+ORDER BY mean DESC;
+
++-------------+-------------+-----------+---------------------+
+| nationality | books_count | mean      | std                 |
++-------------+-------------+-----------+---------------------+
+| RUS         |           2 | 37.865000 |   9.614999999999997 |
+| IND         |           2 | 37.715000 |   8.594999999999999 |
+| COL         |           1 | 37.650000 |                   0 |
+| DEU         |           4 | 34.407500 |   9.246692314011536 |
+| CHN         |           2 | 32.430000 |  11.729999999999999 |
+| GBR         |          33 | 31.847576 |  11.947687497892263 |
+| FRA         |          10 | 29.931000 |    8.29831241879938 |
+| ESP         |           2 | 29.565000 |   5.484999999999999 |
+| MEX         |           6 | 29.190000 |  11.678575826415367 |
+| USA         |          83 | 28.929398 |  11.847953241916713 |
+| ARG         |           4 | 28.895000 |   9.935322088387473 |
+| CHI         |           8 | 28.135000 |   8.698124797909031 |
+| ISR         |           4 | 26.105000 |   9.267822020302289 |
+| CAN         |           9 | 23.967778 |  11.789122837766625 |
+| AUS         |           2 | 21.280000 |  1.6400000000000006 |
+| PER         |           2 | 20.200000 | 0.35000000000000053 |
+| IRL         |           2 | 17.205000 |   1.174999999999998 |
++-------------+-------------+-----------+---------------------+
+17 rows in set (0.00 sec)
+```
+**What Is the Maximum and Minimum Price of a Book?** To find the maximum and minimum price of books:
+
+```sh
+SELECT a.nationality, MAX(price) AS max_price, MIN(price) AS min_price
+FROM books AS b
+JOIN authors AS a
+    ON a.author_id = b.author_id
+GROUP BY nationality;
+
++-------------+-----------+-----------+
+| nationality | max_price | min_price |
++-------------+-----------+-----------+
+| USA         |     49.98 |     10.21 |
+| GBR         |     49.87 |     12.25 |
+| COL         |     37.65 |     37.65 |
+| RUS         |     47.48 |     28.25 |
+| IRL         |     18.38 |     16.03 |
+| DEU         |     49.09 |     23.67 |
+| FRA         |     41.42 |     13.32 |
+| PER         |     20.55 |     19.85 |
+| CHI         |     46.63 |     15.74 |
+| MEX         |     46.84 |     15.78 |
+| ARG         |     44.45 |     18.88 |
+| CHN         |     44.16 |     20.70 |
+| CAN         |     44.82 |     10.32 |
+| IND         |     46.31 |     29.12 |
+| ESP         |     35.05 |     24.08 |
+| ISR         |     34.10 |     10.60 |
+| AUS         |     22.92 |     19.64 |
++-------------+-----------+-----------+
+```
+
+**6. How Would the Loan Report Look?** To generate a report of book loans, showing the client’s name, type of operation, book title, author (with nationality), and how long ago the operation was updated:
+
+```sh
+SELECT c.name, o.type, b.title, 
+    CONCAT(a.name, ' (', a.nationality, ')') AS author,
+    TO_DAYS(NOW()) - TO_DAYS(o.updated_at) AS ago
+FROM operations AS o
+LEFT JOIN clients AS c
+    ON c.client_id = o.client_id
+LEFT JOIN books AS b
+    ON b.book_id = o.book_id
+LEFT JOIN authors AS a
+    ON b.author_id = a.author_id
+LIMIT 10;
+
++-------------------+----------+---------------------------------------------------+-------------------------+------+
+| name              | type     | title                                             | author                  | ago  |
++-------------------+----------+---------------------------------------------------+-------------------------+------+
+| Jodie Foster      | returned | A Farewell to Arms                                | Ernest Hemingway (USA)  |    1 |
+| Maggie Gyllenhaal | lent     | Incognito: The Secret Lives of the Brain          | David Eagleman (USA)    |    1 |
+| Brie Larson       | lent     | Great Expectations                                | Charles Dickens (GBR)   |    1 |
+| Tig Notaro        | returned | How to Create the Future                          | Ashlee Vance (USA)      |    1 |
+| Ben Barnes        | sold     | The Analytical Engine and the Future of Computing | Ada Lovelace (GBR)      |    1 |
+| Rami Malek        | sold     | Ender's Game                                      | Orson Scott Card (USA)  |    1 |
+| Janelle Monáe     | returned | Sapiens: A Brief History of Humankind             | Yuval Noah Harari (ISR) |    1 |
+| Daniel Craig      | returned | The Plain in Flames                               | Juan Rulfo (MEX)        |    1 |
+| Ryan Reynolds     | lent     | Weapons of Math Destruction                       | Cathy O’Neil (USA)      |    1 |
+| Awkwafina         | sold     | The Digital Economy                               | Don Tapscott (CAN)      |    1 |
++-------------------+----------+---------------------------------------------------+-------------------------+------+
+10 rows in set (0.00 sec)
+```
+**7. Extra: Days Calculation** to see the number of days since each client’s birthdate:
+
+```sh
+SELECT name, TO_DAYS(birthdate) AS birthdate_days
+FROM clients
+LIMIT 10;
+
++--------------------+----------------+
+| name               | birthdate_days |
++--------------------+----------------+
+| Tom Hanks          |         714604 |
+| Scarlett Johansson |         724967 |
+| Robert Downey Jr.  |         717795 |
+| Jennifer Lawrence  |         727059 |
+| Morgan Freeman     |         707626 |
+| Emma Watson        |         726937 |
+| Ryan Reynolds      |         722015 |
+| Natalie Portman    |         723705 |
+| Leonardo DiCaprio  |         721303 |
+| Marge Simpson      |         714492 |
++--------------------+----------------+
+10 rows in set (0.00 sec)
+```
+
+## Data Manipulation: UPDATE and DELETE Commands
+
+**1. Selecting Random Records:** To randomly select a subset of authors. **Note:** Using RAND() can impact performance on large datasets:
+
+
+```sh
+SELECT * 
+FROM authors 
+ORDER BY RAND() 
+LIMIT 10;
+
++-----------+------------------+-------------+
+| author_id | name             | nationality |
++-----------+------------------+-------------+
+|        50 | Bruce Sterling   | USA         |
+|        99 | Richard Dawkins  | GBR         |
+|        31 | Ernest Hemingway | USA         |
+|        81 | Geoffrey Hinton  | CAN         |
+|        11 | Herman Melville  | USA         |
+|        30 | James Joyce      | IRL         |
+|        22 | Neil Gaiman      | GBR         |
+|        69 | Tim Berners-Lee  | GBR         |
+|        64 | James Gleick     | USA         |
+|        35 | Marcel Proust    | FRA         |
++-----------+------------------+-------------+
+10 rows in set (0.00 sec)
+```
+
+**2. Deleting Records:** To delete a specific author by `author_id`. **Note:** Do not FORGET to add the `WHERE`clause:
+
+
+```sh
+DELETE FROM authors 
+WHERE author_id = 200 
+LIMIT 1;
+```
+**3. Identifying Inactive Clients:** 
+
+```sh
+SELECT client_id, name 
+FROM clients 
+WHERE active <> 1;
+```
+**4. Updating Records:** Here is the general structure of an `UPDATE` statement, which you can use to modify records in a table:
+
+```sh
+UPDATE table_name
+SET
+    column1 = value1,
+    column2 = value2,
+    ...
+WHERE
+    conditions
+LIMIT 1;
+
+**Example:** To activate a specific client, you could do the following:
+
+```sh
+UPDATE clients
+SET
+    active = 1
+WHERE
+    client_id = 123
+LIMIT 1;
+```
