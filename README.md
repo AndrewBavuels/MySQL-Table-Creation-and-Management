@@ -10,7 +10,7 @@ If you don't have MySQL installed on your system, follow the installation guide 
 
 In my case, I selected as you can see in the image below, regarding my Ubuntu OS version:
 
-[Insert image here]()
+![1_Ubuntu](https://github.com/user-attachments/assets/8ddbe5d4-262c-4436-930a-03580ee11e36)
 
 After installing, ensure that the MySQL service is up and running before proceeding with the following steps.
 
