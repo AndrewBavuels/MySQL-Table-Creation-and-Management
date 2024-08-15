@@ -1,6 +1,6 @@
 # MySQL Table Creation and Management 📋🗄️💾
 
-[Insert_image]
+![data_migration](https://github.com/user-attachments/assets/fd90fa1d-5f5f-4f1d-b24a-218052cc8be4)
 
 ## 1. Project description 👇
 ### _MySQL Schema and Data Operations Tutorial for WSL Ubuntu Terminal._
