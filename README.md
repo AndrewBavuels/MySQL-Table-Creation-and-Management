@@ -516,7 +516,8 @@ The JOIN (or INNER JOIN) clause is used to combine rows from two or more tables 
 
 **1. Counting Rows in Tables:** First, let’s count the number of rows in the `books` and `authors` tables:
 
-    - `books`:
+#### `books`:
+
 ```sh
 mysql> SELECT COUNT(*) FROM books;
 +----------+
@@ -526,7 +527,8 @@ mysql> SELECT COUNT(*) FROM books;
 +----------+
 1 row in set (0.01 sec)
 ```
-    - `authors`:
+#### `authors`:
+
 ```sh
 mysql> SELECT COUNT(*) FROM authors;
 +----------+
@@ -539,9 +541,9 @@ mysql> SELECT COUNT(*) FROM authors;
 
 **2. Retrieving Data from Multiple Tables:**
 
-    2.1. Retrieve Authors: 
-    
-    Get details of authors with IDs between 1 and 5:
+#### 2.1. Retrieve Authors: 
+
+Get details of authors with IDs between 1 and 5:
 
 ```sh
 mysql> SELECT * FROM authors WHERE author_id > 0 AND author_id <= 5;
@@ -556,9 +558,9 @@ mysql> SELECT * FROM authors WHERE author_id > 0 AND author_id <= 5;
 +-----------+------------------------+-------------+
 5 rows in set (0.01 sec)
 ```
-    2.2. Retrieve Books: 
+#### 2.2. Retrieve Books: 
     
-    Get books with author IDs between 1 and 5:
+Get books with author IDs between 1 and 5:
 
 ```sh
 mysql> SELECT book_id, author_id, title FROM books WHERE author_id BETWEEN 1 AND 5;
@@ -575,9 +577,9 @@ mysql> SELECT book_id, author_id, title FROM books WHERE author_id BETWEEN 1 AND
 ```
 **3. Using INNER JOIN:**
     
-    3.1. Combine Books and Authors: 
+#### 3.1. Combine Books and Authors: 
     
-    Join `books` with `authors` to get book titles along with author names for authors with IDs between 1 and 5:
+Join `books` with `authors` to get book titles along with author names for authors with IDs between 1 and 5:
 
 ```sh
 SELECT b.book_id, a.name, b.title
@@ -597,9 +599,9 @@ WHERE a.author_id BETWEEN 1 AND 5;
 +---------+------------------------+------------------------------------------+
 5 rows in set (0.00 sec)
 ```
-    3.2 Combine Operations, Books, Clients, and Author: 
+#### 3.2 Combine Operations, Books, Clients, and Author: 
     
-    Retrieve names of female clients, book titles, author names, and operation types for operations where books were sold:
+Retrieve names of female clients, book titles, author names, and operation types for operations where books were sold:
 
 ```sh
 SELECT c.name, b.title, a.name, o.type
@@ -623,9 +625,9 @@ WHERE c.gender = 'F'
 +--------------------+------------------------------------------+------------------------+------+
 4 rows in set (0.01 sec)
 ```
-    3.3 Filter Results Based on Conditions: 
+#### 3.3 Filter Results Based on Conditions: 
     
-    Retrieve names, book titles, authors, and operation types for male clients where books were either sold or lent:
+Retrieve names, book titles, authors, and operation types for male clients where books were either sold or lent:
 
 ```sh
 SELECT c.name, b.title, a.name, o.type
@@ -654,9 +656,9 @@ In SQL, `JOIN` operations are crucial for combining data from multiple tables. B
 
 **1. Implicit JOIN vs. Explicit JOIN:**
 
-    1.1. Implicit JOIN: 
+#### 1.1. Implicit JOIN: 
     
-    Uses a comma to separate table names and combines tables based on the `WHERE` clause:
+Uses a comma to separate table names and combines tables based on the `WHERE` clause:
 
 
 ```sh
@@ -681,9 +683,9 @@ LIMIT 10;
 +------------------------------------------+------------------------+
 10 rows in set (0.00 sec)
 ```
-    1.2 Explicit JOIN: 
+#### 1.2 Explicit JOIN: 
     
-    Uses the `JOIN` keyword for better readability and understanding. The example below uses `INNER JOIN`, which is the same as `JOIN`:
+Uses the `JOIN` keyword for better readability and understanding. The example below uses `INNER JOIN`, which is the same as `JOIN`:
 
 ```sh
 SELECT b.title, a.name
@@ -731,9 +733,9 @@ ORDER BY a.name DESC;
 ```
 **3. LEFT JOIN:** The `LEFT JOIN` (or `LEFT OUTER JOIN`) returns all rows from the left table and the matched rows from the right table. If no match is found, NULL values are returned for columns from the right table.
 
-    3.1 Example with LEFT JOIN:
+#### 3.1 Example with LEFT JOIN:
     
-    Retrieve authors and their books. If an author does not have any books, their details will still be included:
+Retrieve authors and their books. If an author does not have any books, their details will still be included:
 
 ```sh
 SELECT a.author_id, a.name, a.nationality, b.title
@@ -1220,7 +1222,6 @@ SELECT COUNT(book_id),
     SUM(IF(year >= 1990 AND year < 2000, 1, 0)) AS `<2000`,
     SUM(IF(year >= 2000, 1, 0)) AS `<today`
 FROM books;
-
 +----------------+-------+-------+-------+--------+
 | COUNT(book_id) | <1950 | <1990 | <2000 | <today |
 +----------------+-------+-------+-------+--------+
@@ -1278,7 +1279,7 @@ For exporting data and schemas from a MySQL database, the `mysqldump` tool is co
 ```sh
 mysqldump -u your_username -p -d database_name > schema.sql
 ```
-    Example:
+#### Example:
 
 ```sh
 mysqldump -u andrewbavuels -p -d holi_operations > squema.sql
@@ -1288,7 +1289,7 @@ mysqldump -u andrewbavuels -p -d holi_operations > squema.sql
 ```sh
 mysqldump -u your_username -p database_name > database_dump.sql
 ```
-    Example:
+#### Example:
 
 ```sh
 mysqldump -u andrewbavuels -p holi_operations > holi_books.sql
@@ -1298,17 +1299,17 @@ These commands generate `.sql` files containing the necessary instructions to re
 
 Additionally, you might need to perform certain table modifications during or after the migration process, such as:
 
-    - Adding a column:
+#### Adding a column:
 
 ```sh
 ALTER TABLE authors ADD COLUMN birthyear INTEGER DEFAULT 1930 AFTER name;
 ```
-    - Modifying a column:
+#### Modifying a column:
 
 ```sh
 ALTER TABLE authors MODIFY COLUMN birthyear YEAR DEFAULT 1920;
 ```
-    - Dropping a column:
+#### Dropping a column:
 
 ```sh
 ALTER TABLE authors DROP COLUMN birthyear;
