@@ -1785,3 +1785,248 @@ WHERE
     client_id = 123
 LIMIT 1;
 ```
+
+## Advanced SQL Techniques for Querys
+
+In this section, you'll find a series of advanced SQL queries that demonstrate how to extract complex insights from your database. These queries go beyond basic SELECT statements, showcasing the power of SQL for data analysis.
+
+**1. Distinct Nationalities:** Get a list of all distinct nationalities present in the authors table:
+
+```sh
+SELECT DISTINCT nationality 
+FROM authors;
++-------------+
+| nationality |
++-------------+
+| USA         |
+| GBR         |
+| COL         |
+| RUS         |
+| CAN         |
+| IRL         |
+| DEU         |
+| FRA         |
+| PER         |
+| CHI         |
+| MEX         |
+| ARG         |
+| CHN         |
+| IND         |
+| ESP         |
+| ISR         |
+| AUS         |
++-------------+
+17 rows in set (0.01 sec)
+```
+**2. Total Number of Books:** Count the total number of books:
+
+```sh
+SELECT COUNT(book_id) 
+FROM books;
++----------------+
+| COUNT(book_id) |
++----------------+
+|            176 |
++----------------+
+1 row in set (0.02 sec)
+```
+**3. Count and Sum Together:** Count the number of books and sum a constant for each record:
+
+```sh
+SELECT COUNT(book_id), SUM(1) 
+FROM books;
+
++----------------+--------+
+| COUNT(book_id) | SUM(1) |
++----------------+--------+
+|            176 |    176 |
++----------------+--------+
+1 row in set (0.00 sec)
+```
+**4. Sum of Sellable Books:** Calculate the total price of all sellable books:
+
+```sh
+SELECT SUM(price) 
+FROM books 
+WHERE sellable = 1;
++------------+
+| SUM(price) |
++------------+
+|    5155.15 |
++------------+
+1 row in set (0.00 sec)
+```
+**5. Total Value of Sellable Books with Copies:** Calculate the total value considering the number of copies for each sellable book:
+
+```sh
+SELECT SUM(price * copies) 
+FROM books 
+WHERE sellable = 1;
++---------------------+
+| SUM(price * copies) |
++---------------------+
+|            37695.60 |
++---------------------+
+1 row in set (0.00 sec)
+```
+
+**6. Grouping by Sellable Status:** Sum the total value of books grouped by whether they are sellable:
+
+```sh
+SELECT sellable, SUM(price * copies) 
+FROM books 
+GROUP BY sellable;
++----------+---------------------+
+| sellable | SUM(price * copies) |
++----------+---------------------+
+|        1 |            37695.60 |
++----------+---------------------+
+1 row in set (0.01 sec)
+```
+**7. Books Published Before 1950:** Count the number of books published before 1950:
+
+```sh
+SELECT COUNT(book_id), SUM(IF(year < 1950, 1, 0)) AS `<1950` 
+FROM books;
++----------------+-------+
+| COUNT(book_id) | <1950 |
++----------------+-------+
+|            176 |    31 |
++----------------+-------+
+1 row in set (0.00 sec)
+```
+
+Or alternatively:
+
+```sh
+SELECT COUNT(book_id) 
+FROM books 
+WHERE year < 1950;
++----------------+
+| COUNT(book_id) |
++----------------+
+|             31 |
++----------------+
+1 row in set (0.00 sec)
+```
+**8. Count books published before and after 1950:** 
+
+```sh
+SELECT COUNT(book_id), 
+    SUM(IF(year < 1950, 1, 0)) AS `<1950`,
+    SUM(IF(year >= 1950, 1, 0)) AS `>1950` 
+FROM books;
++----------------+-------+-------+
+| COUNT(book_id) | <1950 | >1950 |
++----------------+-------+-------+
+|            176 |    31 |   145 |
++----------------+-------+-------+
+1 row in set (0.00 sec)
+```
+
+**9. Books Published by Decade:** Count books by different time periods:
+
+```sh
+SELECT COUNT(book_id), 
+    SUM(IF(year < 1950, 1, 0)) AS `<1950`,
+    SUM(IF(year >= 1950 AND year < 1990, 1, 0)) AS `<1990`,
+    SUM(IF(year >= 1990 AND year < 2000, 1, 0)) AS `<2000`,
+    SUM(IF(year >= 2000, 1, 0)) AS `<today`
+FROM books;
+
++----------------+-------+-------+-------+--------+
+| COUNT(book_id) | <1950 | <1990 | <2000 | <today |
++----------------+-------+-------+-------+--------+
+|            176 |    31 |    43 |    21 |     81 |
++----------------+-------+-------+-------+--------+
+1 row in set (0.00 sec)
+```
+
+**10. Count books by nationality and time period:** 
+
+
+```sh
+SELECT a.nationality, COUNT(book_id), 
+    SUM(IF(year < 1950, 1, 0)) AS `<1950`,
+    SUM(IF(year >= 1950 AND year < 1990, 1, 0)) AS `<1990`,
+    SUM(IF(year >= 1990 AND year < 2000, 1, 0)) AS `<2000`,
+    SUM(IF(year >= 2000, 1, 0)) AS `<today`
+FROM books AS b
+JOIN authors AS a
+    ON a.author_id = b.author_id
+WHERE a.nationality IS NOT NULL
+GROUP BY a.nationality;
++-------------+----------------+-------+-------+-------+--------+
+| nationality | COUNT(book_id) | <1950 | <1990 | <2000 | <today |
++-------------+----------------+-------+-------+-------+--------+
+| USA         |             83 |     7 |    20 |     9 |     47 |
+| GBR         |             33 |     7 |    11 |     4 |     11 |
+| COL         |              1 |     0 |     1 |     0 |      0 |
+| RUS         |              2 |     2 |     0 |     0 |      0 |
+| IRL         |              2 |     2 |     0 |     0 |      0 |
+| DEU         |              4 |     2 |     0 |     0 |      2 |
+| FRA         |             10 |    10 |     0 |     0 |      0 |
+| PER         |              2 |     0 |     2 |     0 |      0 |
+| CHI         |              8 |     1 |     1 |     3 |      3 |
+| MEX         |              6 |     0 |     5 |     1 |      0 |
+| ARG         |              4 |     0 |     3 |     1 |      0 |
+| CHN         |              2 |     0 |     0 |     0 |      2 |
+| CAN         |              9 |     0 |     0 |     1 |      8 |
+| IND         |              2 |     0 |     0 |     0 |      2 |
+| ESP         |              2 |     0 |     0 |     1 |      1 |
+| ISR         |              4 |     0 |     0 |     0 |      4 |
+| AUS         |              2 |     0 |     0 |     1 |      1 |
++-------------+----------------+-------+-------+-------+--------+
+17 rows in set (0.00 sec)
+```
+
+## Data Migration
+
+In certain scenarios, you may need to migrate data from one database to another, whether due to a system upgrade, environment change, or the need to back up and restore data.
+
+For exporting data and schemas from a MySQL database, the `mysqldump` tool is commonly used. Below are basic examples of how `mysqldump` can be utilized as part of a data migration process.
+
+**1. Exporting the schema only (without data):**
+
+```sh
+mysqldump -u your_username -p -d database_name > schema.sql
+```
+    Example:
+
+```sh
+mysqldump -u andrewbavuels -p -d holi_operations > squema.sql
+```
+**2. Exporting both the schema and the data:**
+
+```sh
+mysqldump -u your_username -p database_name > database_dump.sql
+```
+    Example:
+
+```sh
+mysqldump -u andrewbavuels -p holi_operations > holi_books.sql
+```
+
+These commands generate `.sql` files containing the necessary instructions to recreate the database structure and, if desired, the data in another MySQL system.
+
+Additionally, you might need to perform certain table modifications during or after the migration process, such as:
+
+    - Adding a column:
+
+```sh
+ALTER TABLE authors ADD COLUMN birthyear INTEGER DEFAULT 1930 AFTER name;
+```
+    - Modifying a column:
+
+```sh
+ALTER TABLE authors MODIFY COLUMN birthyear YEAR DEFAULT 1920;
+```
+    - Dropping a column:
+
+```sh
+ALTER TABLE authors DROP COLUMN birthyear;
+```
+
+**Note:** A complete data migration may involve additional steps such as transforming and validating data in the new environment.
+
+This section provides a high-level overview of the data migration process, with a focus on how `mysqldump` can be used, making it accessible and clear for anyone reading the READ
