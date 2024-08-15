@@ -2,7 +2,7 @@
 
 ![data_migration](https://github.com/user-attachments/assets/fd90fa1d-5f5f-4f1d-b24a-218052cc8be4)
 
-## 1. Project description 👇
+## Project description 👇
 ### _MySQL Schema and Data Operations Tutorial for WSL Ubuntu Terminal._
 
 This project provides a comprehensive tutorial on creating and managing **MySQL databases, tables, and data operations** using the terminal in WSL (Windows Subsystem for Linux) with Ubuntu. 
